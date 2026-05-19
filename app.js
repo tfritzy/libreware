@@ -93,13 +93,8 @@ const populateTaskListSelect = () => {
 const moveTask = (taskId, targetListId) => {
   const task = getTaskById(taskId);
   const targetList = dataModel.lists.find((list) => list.id === targetListId);
-  const isInvalidMove =
-    !task ||
-    !targetList ||
-    task.boardId !== selectedBoardId ||
-    targetList.boardId !== selectedBoardId;
 
-  if (isInvalidMove) {
+  if (!task || !targetList || task.boardId !== selectedBoardId || targetList.boardId !== selectedBoardId) {
     return;
   }
 
