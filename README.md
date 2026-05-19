@@ -1,4 +1,4 @@
-1. A collection of simple products, built free and open source software with no monetization whatsoever. Aiming to destroy the GDP of simple software.
+1. A collection of simple products, built free and open source software with no monetization whatsoever. Aiming to destroy the gdp of simple software.
 
 ## Kanban demo
 
@@ -11,7 +11,7 @@ This repository includes a minimal, unstyled Kanban implementation with the foll
 
 ### Run
 
-Open `index.html` in any browser.
+Open `/home/runner/work/libreware/libreware/index.html` in any browser.
 
 ### Features
 
