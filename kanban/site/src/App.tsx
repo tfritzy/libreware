@@ -48,7 +48,7 @@ function App() {
 
     const channel = client
       .channel('notes-feed')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notes' }, () => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notes' }, () => {
         void loadNotes()
       })
       .subscribe()

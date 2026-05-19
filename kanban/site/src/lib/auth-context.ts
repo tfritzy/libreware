@@ -7,7 +7,9 @@ export interface AuthContextType {
   loading: boolean
 }
 
+const initialLoadingState = supabase !== null
+
 export const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: Boolean(supabase),
+  loading: initialLoadingState,
 })

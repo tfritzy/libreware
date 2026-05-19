@@ -14,19 +14,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     let isMounted = true
 
-    void supabase.auth.getSession().then(({ data, error }) => {
-      if (!isMounted) {
-        return
-      }
+    void supabase.auth
+      .getSession()
+      .then(({ data, error }) => {
+        if (!isMounted) {
+          return
+        }
 
-      if (error) {
+        if (error) {
+          setUser(null)
+        } else {
+          setUser(data.session?.user ?? null)
+        }
+
+        setLoading(false)
+      })
+      .catch(() => {
+        if (!isMounted) {
+          return
+        }
+
         setUser(null)
-      } else {
-        setUser(data.session?.user ?? null)
-      }
-
-      setLoading(false)
-    })
+        setLoading(false)
+      })
 
     const {
       data: { subscription },
