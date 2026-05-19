@@ -1,31 +1,45 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, type User } from 'firebase/auth';
-import { auth } from './firebase';
-
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-}
-
-const AuthContext = createContext<AuthContextType>({ user: null, loading: true });
+import React, { useEffect, useState } from 'react'
+import type { User } from '@supabase/supabase-js'
+import { AuthContext } from './auth-context'
+import { supabase } from './supabase'
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(Boolean(supabase))
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return unsubscribe;
-  }, []);
+    if (!supabase) {
+      return
+    }
 
-  return (
-    <AuthContext.Provider value={{ user, loading }}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
-};
+    let isMounted = true
 
-export const useAuth = () => useContext(AuthContext);
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (!isMounted) {
+        return
+      }
+
+      if (error) {
+        setUser(null)
+      } else {
+        setUser(data.session?.user ?? null)
+      }
+
+      setLoading(false)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
+
+    return () => {
+      isMounted = false
+      subscription.unsubscribe()
+    }
+  }, [])
+
+  return <AuthContext.Provider value={{ user, loading }}>{!loading && children}</AuthContext.Provider>
+}
