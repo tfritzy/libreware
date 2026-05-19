@@ -32,7 +32,7 @@ function App() {
     if (!selectedBoardId) return;
     const unsubLists = subscribeLists(selectedBoardId, setLists)
     const unsubTasks = subscribeTasks(selectedBoardId, setTasks)
-    return () => { unsubLists(); unsubTasks(); setLists([]); setTasks([]) }
+    return () => { unsubLists(); unsubTasks() }
   }, [selectedBoardId])
 
   const handleAddBoard = async (e: React.FormEvent) => {
@@ -135,7 +135,7 @@ function App() {
                         <strong>{task.name}</strong>
                         {task.description && <p>{task.description}</p>}
                         <select
-                          value={list.id}
+                          value={task.listId}
                           onChange={e => handleMoveTask(task.id, e.target.value)}
                         >
                           {lists.map(l => (
