@@ -160,7 +160,7 @@ function App() {
                 Add <code className="font-mono">VITE_SUPABASE_URL</code> and{' '}
                 <code className="font-mono">VITE_SUPABASE_ANON_KEY</code> in a{' '}
                 <code className="font-mono">.env.local</code> file, then run the SQL in{' '}
-                <code className="font-mono">/home/runner/work/libreware/libreware/kanban/supabase/schema.sql</code>.
+                <code className="font-mono">kanban/supabase/schema.sql</code>.
               </p>
             </div>
           ) : user ? (
