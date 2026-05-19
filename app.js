@@ -130,56 +130,55 @@ const renderLists = () => {
       empty.textContent = "No tasks in this list.";
       listSection.appendChild(empty);
       listsRoot.appendChild(listSection);
-      return;
+    } else {
+      list.taskIds.forEach((taskId) => {
+        const task = getTaskById(taskId);
+        if (!task) {
+          return;
+        }
+
+        const taskCard = document.createElement("article");
+        const taskName = document.createElement("h4");
+        taskName.textContent = task.name;
+
+        const taskDescription = document.createElement("p");
+        taskDescription.textContent = task.description;
+
+        const moveForm = document.createElement("form");
+        const moveLabel = document.createElement("label");
+        const moveSelect = document.createElement("select");
+        const moveButton = document.createElement("button");
+
+        moveLabel.textContent = "Move to list";
+        moveLabel.htmlFor = `move-${task.id}`;
+        moveSelect.id = `move-${task.id}`;
+        moveButton.type = "submit";
+        moveButton.textContent = "Move";
+
+        getBoardLists(selectedBoardId).forEach((boardList) => {
+          const option = document.createElement("option");
+          option.value = boardList.id;
+          option.textContent = boardList.name;
+          option.selected = boardList.id === task.listId;
+          moveSelect.appendChild(option);
+        });
+
+        moveForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          moveTask(task.id, moveSelect.value);
+          renderAll();
+        });
+
+        moveForm.appendChild(moveLabel);
+        moveForm.appendChild(moveSelect);
+        moveForm.appendChild(moveButton);
+
+        taskCard.appendChild(taskName);
+        taskCard.appendChild(taskDescription);
+        taskCard.appendChild(moveForm);
+        listSection.appendChild(taskCard);
+      });
     }
-
-    list.taskIds.forEach((taskId) => {
-      const task = getTaskById(taskId);
-      if (!task) {
-        return;
-      }
-
-      const taskCard = document.createElement("article");
-      const taskName = document.createElement("h4");
-      taskName.textContent = task.name;
-
-      const taskDescription = document.createElement("p");
-      taskDescription.textContent = task.description;
-
-      const moveForm = document.createElement("form");
-      const moveLabel = document.createElement("label");
-      const moveSelect = document.createElement("select");
-      const moveButton = document.createElement("button");
-
-      moveLabel.textContent = "Move to list";
-      moveLabel.htmlFor = `move-${task.id}`;
-      moveSelect.id = `move-${task.id}`;
-      moveButton.type = "submit";
-      moveButton.textContent = "Move";
-
-      getBoardLists(selectedBoardId).forEach((boardList) => {
-        const option = document.createElement("option");
-        option.value = boardList.id;
-        option.textContent = boardList.name;
-        option.selected = boardList.id === task.listId;
-        moveSelect.appendChild(option);
-      });
-
-      moveForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        moveTask(task.id, moveSelect.value);
-        renderAll();
-      });
-
-      moveForm.appendChild(moveLabel);
-      moveForm.appendChild(moveSelect);
-      moveForm.appendChild(moveButton);
-
-      taskCard.appendChild(taskName);
-      taskCard.appendChild(taskDescription);
-      taskCard.appendChild(moveForm);
-      listSection.appendChild(taskCard);
-    });
 
     listsRoot.appendChild(listSection);
   });
