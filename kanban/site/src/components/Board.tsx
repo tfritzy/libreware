@@ -16,7 +16,7 @@ import { AddList } from "./AddList";
 
 export const BoardComponent = ({ id }: { id: string }) => {
   const { user } = useAuth();
-  const [board, setBoard] = useState<Board | undefined>(undefined);
+  const [_, setBoard] = useState<Board | undefined>(undefined);
   const [lists, setLists] = useState<List[]>([]);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
     );
 
     return unsubscribe;
-  }, [user]);
+  }, [user, id]);
 
   useEffect(() => {
     if (!user) return;
@@ -66,6 +66,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
       {lists.map((l) => (
         <ListComponent id={l.id} boardId={id} key={l.id} />
       ))}
+
       <AddList boardId={id} />
     </div>
   );

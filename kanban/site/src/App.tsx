@@ -11,12 +11,10 @@ function App() {
   const handleLogout = () => signOut(auth);
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-zinc-100 p-4 sm:p-8">
+    <div className="min-h-screen text-black bg-[url('/backgrounds/nature/marcreation-fV_qtB_sTV8-unsplash.jpg')] bg-cover bg-center bg-no-repeat bg-fixed">
       <div className="max-w-4xl mx-auto">
-        <header className="flex justify-between items-center mb-12 border-b border-zinc-800 pb-6">
-          <h1 className="text-2xl font-bold tracking-tight">
-            Firebase Kanban Lite
-          </h1>
+        <header className="flex justify-between items-center mb-12 border-b border-zinc-800 pb-6  ">
+          <h1 className="text-2xl font-bold tracking-tight">Firebase Kanban</h1>
           {user ? (
             <div className="flex items-center gap-4">
               <span className="text-sm text-zinc-400 font-mono bg-zinc-800 px-2 py-1 rounded">

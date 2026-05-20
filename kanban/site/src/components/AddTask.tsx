@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { createList, createTask } from "../db/mutations";
-import { generateId } from "../util/generateId";
-import { Timestamp } from "firebase/firestore";
+import { createTask } from "../db/mutations";
 
 export function AddTask({
   boardId,
@@ -15,7 +13,7 @@ export function AddTask({
 
   if (editing) {
     return (
-      <div className="bg-white/20 rounded">
+      <div className="">
         <input
           value={name}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -42,10 +40,7 @@ export function AddTask({
   }
 
   return (
-    <button
-      className="bg-white/20 px-3 py-2 rounded-lg cursor-pointer"
-      onClick={() => setEditing(true)}
-    >
+    <button className="cursor-pointer" onClick={() => setEditing(true)}>
       + Add task
     </button>
   );

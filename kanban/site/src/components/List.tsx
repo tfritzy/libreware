@@ -45,7 +45,7 @@ export const ListComponent = ({
     );
 
     return unsubscribe;
-  }, [user]);
+  }, [user, id]);
 
   useEffect(() => {
     if (!user) return;
@@ -65,14 +65,15 @@ export const ListComponent = ({
     });
 
     return unsubscribe;
-  }, [user]);
+  }, [user, id]);
 
   return (
-    <div className="bg-neutral-800 rounded-lg px-2 py-4">
+    <div className="bg-white-800/30 rounded-lg px-2 py-4">
       <h3>{list?.name || list?.id}</h3>
       {tasks.map((t) => (
         <TaskComponent task={t} key={t.id} />
       ))}
+
       <AddTask boardId={boardId} listId={id} />
     </div>
   );
