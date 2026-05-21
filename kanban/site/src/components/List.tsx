@@ -68,7 +68,7 @@ export const ListComponent = ({
   }, [user, id]);
 
   return (
-    <div className="bg-white-800/30 rounded-lg px-2 py-4">
+    <div className="bg-neutral-800 border border-white/10 text-white rounded-xl p-1 w-60 h-min">
       <h3>{list?.name || list?.id}</h3>
       {tasks.map((t) => (
         <TaskComponent task={t} key={t.id} />

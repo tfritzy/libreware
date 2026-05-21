@@ -20,8 +20,6 @@ export const BoardComponent = ({ id }: { id: string }) => {
   const [lists, setLists] = useState<List[]>([]);
 
   useEffect(() => {
-    if (!user) return;
-
     const boardRef = doc(db, COLLECTIONS.boards, id);
     const unsubscribe = onSnapshot(
       boardRef,
@@ -42,12 +40,9 @@ export const BoardComponent = ({ id }: { id: string }) => {
   }, [user, id]);
 
   useEffect(() => {
-    if (!user) return;
-
     const q = query(
       collection(db, COLLECTIONS.lists),
       where("boardId", "==", id),
-      orderBy("createdAt", "desc"),
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -60,6 +55,8 @@ export const BoardComponent = ({ id }: { id: string }) => {
 
     return unsubscribe;
   }, [user, id]);
+
+  console.log("lists", id, lists);
 
   return (
     <div className="flex flex-row space-x-10">
