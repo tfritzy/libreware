@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createTask } from "../db/mutations";
+import { Plus } from "lucide-react";
 
 export function AddTask({
   boardId,
@@ -40,8 +41,11 @@ export function AddTask({
   }
 
   return (
-    <button className="cursor-pointer" onClick={() => setEditing(true)}>
-      + Add task
+    <button
+      className="cursor-pointer hover:bg-white/5 rounded-lg px-3 py-1 w-full text-start flex items-center space-x-1"
+      onClick={() => setEditing(true)}
+    >
+      <Plus size={16} /> <span>Add task</span>
     </button>
   );
 }

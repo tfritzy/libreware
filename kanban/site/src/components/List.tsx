@@ -13,6 +13,7 @@ import { COLLECTIONS } from "../db/collections";
 import { db } from "../lib/firebase";
 import { TaskComponent } from "./Task";
 import { AddTask } from "./AddTask";
+import { Box } from "./Box";
 
 export const ListComponent = ({
   id,
@@ -26,8 +27,6 @@ export const ListComponent = ({
   const [list, setList] = useState<List | undefined>();
 
   useEffect(() => {
-    if (!user) return;
-
     const listRef = doc(db, COLLECTIONS.lists, id);
     const unsubscribe = onSnapshot(
       listRef,
@@ -48,8 +47,6 @@ export const ListComponent = ({
   }, [user, id]);
 
   useEffect(() => {
-    if (!user) return;
-
     const q = query(
       collection(db, COLLECTIONS.tasks),
       where("listId", "==", id),
@@ -68,13 +65,18 @@ export const ListComponent = ({
   }, [user, id]);
 
   return (
-    <div className="bg-neutral-800 border border-white/10 text-white rounded-xl p-1 w-60 h-min">
-      <h3>{list?.name || list?.id}</h3>
-      {tasks.map((t) => (
-        <TaskComponent task={t} key={t.id} />
-      ))}
+    <Box>
+      <div className="py-3">
+        <h3 className="font-semibold mb-3 pl-4">{list?.name || list?.id}</h3>
 
-      <AddTask boardId={boardId} listId={id} />
-    </div>
+        <div className="space-y-2 px-1">
+          {tasks.map((t) => (
+            <TaskComponent task={t} key={t.id} />
+          ))}
+
+          <AddTask boardId={boardId} listId={id} />
+        </div>
+      </div>
+    </Box>
   );
 };

@@ -59,7 +59,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
   console.log("lists", id, lists);
 
   return (
-    <div className="flex flex-row space-x-10">
+    <div className="flex flex-row space-x-4">
       {lists.map((l) => (
         <ListComponent id={l.id} boardId={id} key={l.id} />
       ))}

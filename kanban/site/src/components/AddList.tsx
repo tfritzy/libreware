@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { createList } from "../db/mutations";
 import { Check, Plus, X } from "lucide-react";
+import { Box } from "./Box";
 
 export function AddList({ boardId }: { boardId: string }) {
   const [editing, setEditing] = useState(false);
@@ -17,7 +18,7 @@ export function AddList({ boardId }: { boardId: string }) {
   }, [name, boardId]);
 
   return (
-    <div className="bg-neutral-800 border border-white/10 text-white rounded-xl p-1 w-60 h-min text-md">
+    <Box>
       {editing ? (
         <form
           onSubmit={(e) => {
@@ -31,7 +32,7 @@ export function AddList({ boardId }: { boardId: string }) {
             <button
               onClick={stopEditing}
               type="button"
-              className="hover:bg-white/20 text-white/30 text-sm font-medium rounded-full cursor-pointer"
+              className="hover:text-red-500 text-zinc-500 text-sm font-medium rounded-full cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -44,7 +45,7 @@ export function AddList({ boardId }: { boardId: string }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="List name…"
-              className="rounded-lg text-md translate-y-px text-white placeholder:text-white/50 focus:outline-none focus:border-white/50 w-full"
+              className="rounded-lg text-md text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/50 w-full"
             />
 
             <button
@@ -61,9 +62,9 @@ export function AddList({ boardId }: { boardId: string }) {
           className="flex items-center gap-1.5 w-full px-2.5 py-2 text-white hover:bg-white/15 rounded-lg cursor-pointer transition-colors"
         >
           <Plus size={20} />
-          <div className="translate-y-px">Add another list</div>
+          <div className="">Add another list</div>
         </button>
       )}
-    </div>
+    </Box>
   );
 }
