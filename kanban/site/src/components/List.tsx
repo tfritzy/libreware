@@ -50,7 +50,7 @@ export const ListComponent = ({
     const q = query(
       collection(db, COLLECTIONS.tasks),
       where("listId", "==", id),
-      orderBy("createdAt", "desc"),
+      orderBy("createdAt", "asc"),
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {

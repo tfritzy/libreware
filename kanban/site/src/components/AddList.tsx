@@ -22,7 +22,6 @@ export function AddList({ boardId }: { boardId: string }) {
       {editing ? (
         <form
           onSubmit={(e) => {
-            console.log("submit");
             e.preventDefault();
             createListFn();
           }}

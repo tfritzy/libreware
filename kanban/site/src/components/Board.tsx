@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Board, Task, List } from "../db/models";
 import { useAuth } from "../lib/AuthContext";
-import {
-  collection,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
 import { COLLECTIONS } from "../db/collections";
 import { db } from "../lib/firebase";
 import { ListComponent } from "./List";
