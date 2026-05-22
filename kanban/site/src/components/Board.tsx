@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import type { Board, Task, List } from "../db/models";
 import { useAuth } from "../lib/AuthContext";
-import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { COLLECTIONS } from "../db/collections";
 import { db } from "../lib/firebase";
 import { ListComponent } from "./List";
@@ -36,6 +43,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
     const q = query(
       collection(db, COLLECTIONS.lists),
       where("boardId", "==", id),
+      orderBy("createdAt", "asc"),
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -48,8 +56,6 @@ export const BoardComponent = ({ id }: { id: string }) => {
 
     return unsubscribe;
   }, [user, id]);
-
-  console.log("lists", id, lists);
 
   return (
     <div className="flex flex-row space-x-4">

@@ -4,14 +4,9 @@ import { Check, Plus, X } from "lucide-react";
 
 const placeholders = [
   "Reticulate splines",
-  "Shave yak",
-  "Pet cat",
-  "Touch grass",
-  "Pat doggo",
-  "Sniff cantelope",
-  "Register to vote",
   "Poke avocado",
-  "Peel bananna",
+  "Brew potion",
+  "Brew coffee",
 ];
 
 const getRandomPlaceholder = () =>
@@ -42,21 +37,18 @@ export function AddTask({
               description: "",
               listId: listId,
               name: name,
-            }).then(() => {
-              setName("");
-              setEditing(false);
-              setPlaceholder(getRandomPlaceholder());
-              console.log("Focus");
-              buttonRef.current?.focus();
-            });
+            }).then(() => buttonRef.current?.focus());
+            setEditing(false);
+            setName("");
+            setPlaceholder(getRandomPlaceholder());
           }}
-          className="flex flex-col gap-1.5"
+          className="flex flex-col gap-1.5 focus-within:ring ring-zinc-500 rounded-lg bg-white/5"
         >
-          <div className="flex items-center space-x-2 px-2.5 py-2 bg-white/5 rounded-lg">
+          <div className="flex items-center space-x-1 py-1 pl-px pr-1">
             <button
               onClick={() => setEditing(false)}
               type="button"
-              className="hover:text-red-500 text-zinc-500 text-sm font-medium rounded-full cursor-pointer"
+              className="hover:bg-white/12 hover:text-red-500 pl-2 text-zinc-500 text-sm font-medium rounded-lg cursor-pointer"
             >
               <X size={14} />
             </button>
@@ -69,14 +61,14 @@ export function AddTask({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={placeholder}
-              className="text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/50 w-full"
+              className="placeholder:text-zinc-500 focus:outline-none focus:border-white/50 w-full"
             />
 
             <button
               type="submit"
-              className="hover:bg-white/12 text-emerald-500 font-medium rounded-full cursor-pointer"
+              className="hover:bg-white/12 rounded-lg p-1 text-emerald-500 font-medium cursor-pointer"
             >
-              <Check size={14} />
+              <Check size={20} />
             </button>
           </div>
         </form>
@@ -86,9 +78,9 @@ export function AddTask({
         key="add-button"
         onClick={() => setEditing(true)}
         ref={buttonRef}
-        className="flex items-center focus:ring gap-1.5 w-full px-2.5 py-2 text-sm text-white hover:bg-white/15 rounded-lg cursor-pointer transition-colors"
+        className={`flex items-center outline-none focus:ring space-x-1 w-full p-2 text-sm text-zinc-500 hover:text-zinc-300 hover:bg-white/5 rounded-lg cursor-pointer transition-colors ${editing ? "hidden" : ""}`}
       >
-        <Plus size={14} />
+        <Plus size={16} />
         <div className="">Add task</div>
       </button>
     </div>

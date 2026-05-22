@@ -1,23 +1,25 @@
 import type { Timestamp } from "firebase/firestore";
+import type { Color } from "./types";
 
 export type Task = {
-    id: string;
-    name: string;
-    description: string;
-    boardId: string;
-    listId: string;
-    createdAt: Timestamp;
-    updatedAt: Timestamp;
-}
+  id: string;
+  name: string;
+  description: string;
+  boardId: string;
+  listId: string;
+  color: Color;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+};
 
 export type List = {
-    id: string;
-    boardId: string;
-    name: string;
-}
+  id: string;
+  boardId: string;
+  name: string;
+};
 
 export type Board = {
-    id: string;
-    name: string;
-    ownerId: string;
-}
+  id: string;
+  name: string;
+  ownerId: string;
+};

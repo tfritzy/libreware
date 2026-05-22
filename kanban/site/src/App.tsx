@@ -5,7 +5,7 @@ function App() {
   const boardId = "board_alsdkfjlkasj";
 
   return (
-    <div className="min-h-screen text-black bg-[url('/backgrounds/nature/marcreation-fV_qtB_sTV8-unsplash.jpg')] bg-cover bg-center bg-no-repeat bg-fixed">
+    <div className="min-h-screen text-black bg-[url('/backgrounds/nature/john-towner-JgOeRuGD_Y4-unsplash.jpg')] bg-cover bg-center bg-no-repeat bg-fixed">
       <Header />
 
       <div className="container mx-auto">
