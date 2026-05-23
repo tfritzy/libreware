@@ -15,9 +15,11 @@ const getRandomPlaceholder = () =>
 export function AddTask({
   boardId,
   listId,
+  maxWeight,
 }: {
   boardId: string;
   listId: string;
+  maxWeight: number;
 }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
@@ -37,6 +39,7 @@ export function AddTask({
               description: "",
               listId: listId,
               name: name,
+              weight: maxWeight + 1_000_000,
             }).then(() => buttonRef.current?.focus());
             setEditing(false);
             setName("");

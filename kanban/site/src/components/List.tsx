@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { List, Task } from "../db/models";
 import { useAuth } from "../lib/AuthContext";
 import {
@@ -14,6 +14,14 @@ import { db } from "../lib/firebase";
 import { TaskComponent } from "./Task";
 import { AddTask } from "./AddTask";
 import { Box } from "./Box";
+import { Reorder, type Transition } from "motion/react";
+
+const transition: Transition = {
+  type: "spring",
+  stiffness: 400,
+  damping: 30,
+  mass: 0.8,
+};
 
 export const ListComponent = ({
   id,
@@ -25,6 +33,7 @@ export const ListComponent = ({
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [list, setList] = useState<List | undefined>();
+  const [maxWeight, setMaxWeight] = useState<number>();
 
   useEffect(() => {
     const listRef = doc(db, COLLECTIONS.lists, id);
@@ -58,24 +67,36 @@ export const ListComponent = ({
         id: doc.id,
         ...doc.data(),
       })) as Task[];
+      tasksData.sort((t) => t.weight);
       setTasks(tasksData);
+      setMaxWeight(tasksData[tasksData.length - 1].weight);
     });
 
     return unsubscribe;
   }, [user, id]);
+
+  const onReorder = useCallback((tasks: Task[]) => {
+    setTasks(tasks);
+  }, []);
 
   return (
     <Box>
       <div className="py-3">
         <h3 className="font-semibold mb-3 pl-4">{list?.name || list?.id}</h3>
 
-        <div className="space-y-2 px-1">
+        <Reorder.Group
+          values={tasks}
+          onReorder={onReorder}
+          className="space-y-2 px-1"
+        >
           {tasks.map((t) => (
-            <TaskComponent task={t} key={t.id} />
+            <Reorder.Item key={t.id} value={t} transition={transition}>
+              <TaskComponent task={t} key={t.id} />
+            </Reorder.Item>
           ))}
 
-          <AddTask boardId={boardId} listId={id} />
-        </div>
+          <AddTask boardId={boardId} listId={id} maxWeight={maxWeight} />
+        </Reorder.Group>
       </div>
     </Box>
   );
