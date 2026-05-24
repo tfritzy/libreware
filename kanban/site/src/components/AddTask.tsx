@@ -15,11 +15,9 @@ const getRandomPlaceholder = () =>
 export function AddTask({
   boardId,
   listId,
-  maxWeight,
 }: {
   boardId: string;
   listId: string;
-  maxWeight: number;
 }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
@@ -39,13 +37,12 @@ export function AddTask({
               description: "",
               listId: listId,
               name: name,
-              weight: maxWeight + 1_000_000,
             }).then(() => buttonRef.current?.focus());
             setEditing(false);
             setName("");
             setPlaceholder(getRandomPlaceholder());
           }}
-          className="flex flex-col gap-1.5 focus-within:ring ring-zinc-500 rounded-lg bg-white/5"
+          className="focus-within:ring ring-zinc-500 rounded-lg bg-white/5"
         >
           <div className="flex items-center space-x-1 py-1 pl-px pr-1">
             <button

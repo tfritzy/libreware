@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Board, Task, List } from "../db/models";
 import { useAuth } from "../lib/AuthContext";
 import {
@@ -13,11 +13,13 @@ import { COLLECTIONS } from "../db/collections";
 import { db } from "../lib/firebase";
 import { ListComponent } from "./List";
 import { AddList } from "./AddList";
+import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 
 export const BoardComponent = ({ id }: { id: string }) => {
   const { user } = useAuth();
   const [_, setBoard] = useState<Board | undefined>(undefined);
-  const [lists, setLists] = useState<List[]>([]);
+  const [rawLists, setRawLists] = useState<List[]>([]);
+  const [rawTasks, setRawTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     const boardRef = doc(db, COLLECTIONS.boards, id);
@@ -47,23 +49,69 @@ export const BoardComponent = ({ id }: { id: string }) => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const listsData = snapshot.docs.map((doc) => ({
+      const listData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as Task[];
-      setLists(listsData);
+      })) as List[];
+      setRawLists(listData);
     });
 
     return unsubscribe;
-  }, [user, id]);
+  }, [id]);
+
+  useEffect(() => {
+    const q = query(
+      collection(db, COLLECTIONS.tasks),
+      where("boardId", "==", id),
+      orderBy("createdAt", "asc"),
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const tasksData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Task[];
+      setRawTasks(tasksData);
+    });
+
+    return unsubscribe;
+  }, [id]);
+
+  const lists = useMemo(() => {
+    const tasksByList = new Map<string, Task[]>();
+    rawTasks.forEach((t) => {
+      if (!tasksByList.has(t.listId)) tasksByList.set(t.listId, []);
+      tasksByList.get(t.listId).push(t);
+    });
+
+    const updated = rawLists.map((rl) => ({
+      ...rl,
+      tasks: tasksByList.get(rl.id) || [],
+    }));
+
+    return updated;
+  }, [rawLists, rawTasks]);
+
+  const onDragEnd = useCallback((result: DropResult<string>) => {
+    console.log(result);
+  }, []);
 
   return (
-    <div className="flex flex-row space-x-4">
-      {lists.map((l) => (
-        <ListComponent id={l.id} boardId={id} key={l.id} />
-      ))}
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div className="flex flex-row space-x-4">
+        {lists.map((l) => {
+          return (
+            <ListComponent
+              id={l.id}
+              boardId={l.boardId}
+              name={l.name}
+              tasks={l.tasks}
+            />
+          );
+        })}
 
-      <AddList boardId={id} />
-    </div>
+        <AddList boardId={id} />
+      </div>
+    </DragDropContext>
   );
 };
