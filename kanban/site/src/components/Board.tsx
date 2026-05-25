@@ -45,7 +45,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
     const q = query(
       collection(db, COLLECTIONS.lists),
       where("boardId", "==", id),
-      orderBy("createdAt", "asc"),
+      orderBy("createdAt", "desc"),
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
