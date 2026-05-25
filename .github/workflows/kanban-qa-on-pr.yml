@@ -1,0 +1,44 @@
+name: Deploy Kanban QA on PR
+
+on:
+  pull_request:
+    paths:
+      - "kanban/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy_qa:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: kanban/site
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: kanban/site/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Deploy to Firebase Hosting QA channel
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KANBAN_LIBREWARE }}"
+          projectId: kanban-libreware
+          channelId: qa
+          entryPoint: ./kanban
