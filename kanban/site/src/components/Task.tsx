@@ -10,7 +10,7 @@ export const TaskComponent = ({
 }) => {
   return (
     <Draggable key={task.id} draggableId={task.id} index={index}>
-      {(provided, snapshot) => (
+      {(provided, _) => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}

@@ -82,7 +82,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
     const tasksByList = new Map<string, Task[]>();
     rawTasks.forEach((t) => {
       if (!tasksByList.has(t.listId)) tasksByList.set(t.listId, []);
-      tasksByList.get(t.listId).push(t);
+      tasksByList.get(t.listId)?.push(t);
     });
 
     const updated = rawLists.map((rl) => ({
