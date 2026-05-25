@@ -7,6 +7,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { COLLECTIONS } from "../db/collections";
@@ -45,7 +46,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
     const q = query(
       collection(db, COLLECTIONS.lists),
       where("boardId", "==", id),
-      orderBy("createdAt", "desc"),
+      orderBy("createdAt", "asc"),
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -92,8 +93,26 @@ export const BoardComponent = ({ id }: { id: string }) => {
     return updated;
   }, [rawLists, rawTasks]);
 
-  const onDragEnd = useCallback((result: DropResult<string>) => {
-    console.log(result);
+  const onDragEnd = useCallback(async (result: DropResult<string>) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    if (destination.droppableId === source.droppableId) {
+      return;
+    }
+
+    const taskId = draggableId;
+    const newlistId = destination.droppableId;
+
+    try {
+      const taskRef = doc(db, COLLECTIONS.tasks, taskId);
+      await updateDoc(taskRef, { listId: newlistId });
+    } catch (error) {
+      console.error("Error updating task listId:", error);
+    }
   }, []);
 
   return (
