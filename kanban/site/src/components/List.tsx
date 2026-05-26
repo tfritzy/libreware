@@ -22,7 +22,7 @@ export const ListComponent = ({
 
         <div className="">
           <Droppable droppableId={id}>
-            {(provided, snapshot) => (
+            {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {tasks.map((t, i) => (
                   <TaskComponent task={t} key={t.id} index={i} />

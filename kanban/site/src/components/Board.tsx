@@ -80,8 +80,9 @@ export const BoardComponent = ({ id }: { id: string }) => {
   const lists = useMemo(() => {
     const tasksByList = new Map<string, Task[]>();
     rawTasks.forEach((t) => {
-      if (!tasksByList.has(t.listId)) tasksByList.set(t.listId, []);
-      tasksByList.get(t.listId).push(t);
+      const listTasks = tasksByList.get(t.listId) ?? [];
+      listTasks.push(t);
+      tasksByList.set(t.listId, listTasks);
     });
 
     const updated = rawLists.map((rl) => ({
@@ -102,6 +103,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
         {lists.map((l) => {
           return (
             <ListComponent
+              key={l.id}
               id={l.id}
               boardId={l.boardId}
               name={l.name}
