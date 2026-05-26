@@ -121,6 +121,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
         {lists.map((l) => {
           return (
             <ListComponent
+              key={l.id}
               id={l.id}
               boardId={l.boardId}
               name={l.name}
