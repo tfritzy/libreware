@@ -1,5 +1,4 @@
 import { useState } from "react";
-// Note: Use '@hello-pangea/dnd' instead of 'react-beautiful-dnd' for modern React support
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import type { DropResult } from "@hello-pangea/dnd";
 
