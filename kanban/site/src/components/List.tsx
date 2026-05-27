@@ -15,6 +15,8 @@ export const ListComponent = ({
   name: string;
   tasks: Task[];
 }) => {
+  console.log(id, tasks);
+
   return (
     <Box>
       <div className="py-3">

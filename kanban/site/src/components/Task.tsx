@@ -1,5 +1,23 @@
-import { Draggable } from "@hello-pangea/dnd";
+import {
+  Draggable,
+  type DraggableStateSnapshot,
+  type DraggableStyle,
+} from "@hello-pangea/dnd";
 import type { Task } from "../db/models";
+
+function getStyle(
+  style: DraggableStyle | undefined,
+  snapshot: DraggableStateSnapshot,
+) {
+  if (!snapshot.isDropAnimating) {
+    return style;
+  }
+
+  return {
+    ...style,
+    transitionDuration: `0.1s`,
+  };
+}
 
 export const TaskComponent = ({
   task,
@@ -10,12 +28,12 @@ export const TaskComponent = ({
 }) => {
   return (
     <Draggable key={task.id} draggableId={task.id} index={index}>
-      {(provided) => (
+      {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          style={provided.draggableProps.style}
+          style={getStyle(provided.draggableProps.style, snapshot)}
           className="flex space-x-2 mb-2 items-center bg-zinc-800 rounded-lg px-3 py-2 cursor-pointer hover:brightness-125 transition-colors duration-[15]"
         >
           <div

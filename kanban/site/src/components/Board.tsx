@@ -14,6 +14,7 @@ import { db } from "../lib/firebase";
 import { ListComponent } from "./List";
 import { AddList } from "./AddList";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
+import { updateTask } from "../db/mutations";
 
 export const BoardComponent = ({ id }: { id: string }) => {
   const { user } = useAuth();
@@ -77,6 +78,31 @@ export const BoardComponent = ({ id }: { id: string }) => {
     return unsubscribe;
   }, [id]);
 
+  const onDragEnd = useCallback(
+    (result: DropResult<string>) => {
+      const { source, destination, draggableId } = result;
+
+      if (source.droppableId === destination?.droppableId) {
+        return;
+      }
+
+      const sourceList = source.droppableId;
+      const destList = destination?.droppableId;
+
+      if (!sourceList || !destList) return;
+
+      const updated = [...rawTasks];
+      const task = updated.find((t) => t.id === draggableId);
+      if (task) task.listId = destList;
+      setRawTasks(updated);
+
+      updateTask(draggableId, {
+        listId: destination?.droppableId,
+      });
+    },
+    [rawTasks],
+  );
+
   const lists = useMemo(() => {
     const tasksByList = new Map<string, Task[]>();
     rawTasks.forEach((t) => {
@@ -92,10 +118,6 @@ export const BoardComponent = ({ id }: { id: string }) => {
 
     return updated;
   }, [rawLists, rawTasks]);
-
-  const onDragEnd = useCallback((result: DropResult<string>) => {
-    console.log(result);
-  }, []);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
