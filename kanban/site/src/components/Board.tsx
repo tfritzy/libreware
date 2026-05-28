@@ -81,24 +81,61 @@ export const BoardComponent = ({ id }: { id: string }) => {
   const onDragEnd = useCallback(
     (result: DropResult<string>) => {
       const { source, destination, draggableId } = result;
-
-      if (source.droppableId === destination?.droppableId) {
+      
+      if (!destination) {
         return;
       }
 
-      const sourceList = source.droppableId;
-      const destList = destination?.droppableId;
+      // If moving within the same list, do nothing for now (or implement reordering)
+      if (source.droppableId === destination.droppableId) {
+        // TODO: Implement reordering within the same list
+        return;
+      }
 
-      if (!sourceList || !destList) return;
+      const destListId = destination.droppableId;
 
-      const updated = [...rawTasks];
-      const task = updated.find((t) => t.id === draggableId);
-      if (task) task.listId = destList;
-      setRawTasks(updated);
+      // Find the task being dragged
+      const draggedTask = rawTasks.find((t) => t.id === draggableId);
+      if (!draggedTask) return;
 
-      updateTask(draggableId, {
-        listId: destination?.droppableId,
-      });
+      // Get tasks currently in the destination list, excluding the dragged task
+      const destListTasks = rawTasks
+        .filter((t) => t.listId === destListId && t.id !== draggableId)
+        .sort((a, b) => (a.weight ?? 0) - (b.weight ?? 0)); // Sort by weight
+
+      let newWeight: number;
+
+      if (destination.index === 0) {
+        // Dropped at the beginning
+        if (destListTasks.length === 0) {
+          newWeight = 1000; // Arbitrary starting weight for an empty list
+        } else {
+          newWeight = (destListTasks[0].weight ?? 0) / 2;
+        }
+      } else if (destination.index >= destListTasks.length) {
+        // Dropped at the end
+        if (destListTasks.length === 0) {
+          newWeight = 1000; // Should not happen if index >= length and length is 0, but for safety
+        } else {
+          newWeight = (destListTasks[destListTasks.length - 1].weight ?? 0) + 1000;
+        }
+      } else {
+        // Dropped in the middle
+        const prevTaskWeight = destListTasks[destination.index - 1].weight ?? 0;
+        const nextTaskWeight = destListTasks[destination.index].weight ?? 0;
+        newWeight = (prevTaskWeight + nextTaskWeight) / 2;
+      }
+
+      // Optimistic UI update
+      const updatedRawTasks = rawTasks.map((task) =>
+        task.id === draggableId
+          ? { ...task, listId: destListId, weight: newWeight }
+          : task,
+      );
+      setRawTasks(updatedRawTasks);
+
+      // Update in DB
+      updateTask(draggableId, { listId: destListId, weight: newWeight });
     },
     [rawTasks],
   );
