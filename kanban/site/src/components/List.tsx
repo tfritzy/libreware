@@ -15,7 +15,7 @@ export const ListComponent = ({
   name: string;
   tasks: Task[];
 }) => {
-  console.log(id, tasks);
+  const maxWeight = tasks.reduce((max, task) => Math.max(max, task.weight), 0);
 
   return (
     <Box>
@@ -35,7 +35,7 @@ export const ListComponent = ({
             )}
           </Droppable>
 
-          <AddTask boardId={boardId} listId={id} />
+          <AddTask boardId={boardId} listId={id} maxWeight={maxWeight} />
         </div>
       </div>
     </Box>
