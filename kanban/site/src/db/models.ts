@@ -8,7 +8,6 @@ export type Task = {
   boardId: string;
   listId: string;
   color: Color;
-  weight: number;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 };
