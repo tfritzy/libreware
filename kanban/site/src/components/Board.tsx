@@ -72,6 +72,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
         id: doc.id,
         ...doc.data(),
       })) as Task[];
+      tasksData.sort((a, b) => a.weight - b.weight);
       setRawTasks(tasksData);
     });
 
@@ -82,10 +83,6 @@ export const BoardComponent = ({ id }: { id: string }) => {
     (result: DropResult<string>) => {
       const { source, destination, draggableId } = result;
 
-      if (source.droppableId === destination?.droppableId) {
-        return;
-      }
-
       const sourceList = source.droppableId;
       const destList = destination?.droppableId;
 
@@ -93,11 +90,40 @@ export const BoardComponent = ({ id }: { id: string }) => {
 
       const updated = [...rawTasks];
       const task = updated.find((t) => t.id === draggableId);
-      if (task) task.listId = destList;
-      setRawTasks(updated);
+
+      const listTasks = rawTasks
+        .filter(
+          (t) => t.listId === destination?.droppableId && t.id !== task?.id,
+        )
+        .sort((a, b) => a.weight - b.weight);
+
+      let weight = 0;
+      if (task) {
+        const destI = destination.index;
+
+        if (listTasks.length === 0) {
+          weight = 0;
+        } else if (destI === 0) {
+          weight = listTasks[0].weight - 1_000_000;
+        } else if (destI >= listTasks.length) {
+          weight = listTasks[listTasks.length - 1].weight + 1_000_000;
+        } else {
+          const lowerWeight = listTasks[destI - 1].weight;
+          const upperWeight = listTasks[destI].weight;
+          weight = lowerWeight + (upperWeight - lowerWeight) / 2;
+        }
+
+        task.listId = destList;
+        task.weight = weight;
+
+        updated.sort((a, b) => a.weight - b.weight);
+
+        setRawTasks(updated);
+      }
 
       updateTask(draggableId, {
         listId: destination?.droppableId,
+        weight: weight,
       });
     },
     [rawTasks],
