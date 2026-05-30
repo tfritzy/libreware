@@ -28,24 +28,30 @@ export function AddTask({
   );
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    createTask({
-      boardId: boardId,
-      description: "",
-      listId: listId,
-      weight: maxWeight + 1_000_000,
-      name: name,
-    }).then(() => buttonRef.current?.focus());
-    setEditing(false);
-    setName("");
-    setPlaceholder(getRandomPlaceholder());
-  }, [boardId, listId, name, maxWeight]);
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      createTask({
+        boardId: boardId,
+        description: "",
+        listId: listId,
+        weight: maxWeight + 10,
+        name: name,
+      }).then(() => buttonRef.current?.focus());
+      setEditing(false);
+      setName("");
+      setPlaceholder(getRandomPlaceholder());
+    },
+    [boardId, listId, name, maxWeight],
+  );
 
   return (
     <div>
       {editing && (
-        <form onSubmit={handleSubmit} className="focus-within:ring ring-zinc-500 rounded-lg bg-white/5">
+        <form
+          onSubmit={handleSubmit}
+          className="focus-within:ring ring-zinc-500 rounded-lg bg-white/5"
+        >
           <div className="flex items-center space-x-1 py-1 pl-px pr-1">
             <button
               onClick={() => setEditing(false)}

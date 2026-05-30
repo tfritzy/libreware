@@ -7,6 +7,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  runTransaction,
   where,
 } from "firebase/firestore";
 import { COLLECTIONS } from "../db/collections";
@@ -14,7 +15,7 @@ import { db } from "../lib/firebase";
 import { ListComponent } from "./List";
 import { AddList } from "./AddList";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
-import { updateTask } from "../db/mutations";
+import { updateTask, updateTaskWithTransaction } from "../db/mutations";
 
 export const BoardComponent = ({ id }: { id: string }) => {
   const { user } = useAuth();
@@ -79,8 +80,18 @@ export const BoardComponent = ({ id }: { id: string }) => {
     return unsubscribe;
   }, [id]);
 
+  const needsRebalance = useCallback((tasks: Task[]) => {
+    for (let i = 1; i < tasks.length; i++) {
+      if (Math.abs(tasks[i].weight) - Math.abs(tasks[i - 1].weight) < 1) {
+        return true;
+      }
+    }
+
+    return false;
+  }, []);
+
   const onDragEnd = useCallback(
-    (result: DropResult<string>) => {
+    async (result: DropResult<string>) => {
       const { source, destination, draggableId } = result;
 
       const sourceList = source.droppableId;
@@ -89,44 +100,59 @@ export const BoardComponent = ({ id }: { id: string }) => {
       if (!sourceList || !destList) return;
 
       const updated = [...rawTasks];
-      const task = updated.find((t) => t.id === draggableId);
+      const task = updated.find((t) => t.id === draggableId)!;
 
-      const listTasks = rawTasks
+      let listTasks = rawTasks
         .filter(
           (t) => t.listId === destination?.droppableId && t.id !== task?.id,
         )
         .sort((a, b) => a.weight - b.weight);
 
-      let weight = 0;
-      if (task) {
-        const destI = destination.index;
+      let weight;
+      const destI = destination.index;
 
-        if (listTasks.length === 0) {
-          weight = 0;
-        } else if (destI === 0) {
-          weight = listTasks[0].weight - 1_000_000;
-        } else if (destI >= listTasks.length) {
-          weight = listTasks[listTasks.length - 1].weight + 1_000_000;
-        } else {
-          const lowerWeight = listTasks[destI - 1].weight;
-          const upperWeight = listTasks[destI].weight;
-          weight = lowerWeight + (upperWeight - lowerWeight) / 2;
-        }
-
-        task.listId = destList;
-        task.weight = weight;
-
-        updated.sort((a, b) => a.weight - b.weight);
-
-        setRawTasks(updated);
+      if (listTasks.length === 0) {
+        weight = 0;
+      } else if (destI === 0) {
+        weight = listTasks[0].weight - 1_000_000;
+      } else if (destI >= listTasks.length) {
+        weight = listTasks[listTasks.length - 1].weight + 1_000_000;
+      } else {
+        const lowerWeight = listTasks[destI - 1].weight;
+        const upperWeight = listTasks[destI].weight;
+        weight = lowerWeight + (upperWeight - lowerWeight) / 2;
       }
 
-      updateTask(draggableId, {
-        listId: destination?.droppableId,
-        weight: weight,
-      });
+      task.listId = destList;
+      task.weight = weight;
+
+      updated.sort((a, b) => a.weight - b.weight);
+
+      listTasks = updated.filter((t) => t.listId === destList);
+      if (needsRebalance(listTasks)) {
+        for (let i = 0; i < listTasks.length; i++) {
+          listTasks[i].weight = i * 1_000_000;
+        }
+
+        setRawTasks(updated);
+
+        await runTransaction(db, async (transaction) => {
+          for (let i = 0; i < listTasks.length; i++) {
+            updateTaskWithTransaction(transaction, listTasks[i].id, {
+              listId: listTasks[i].listId,
+              weight: listTasks[i].weight,
+            });
+          }
+        });
+      } else {
+        await updateTask(task.id, {
+          listId: task.listId,
+          weight: task.weight,
+        });
+        setRawTasks(updated);
+      }
     },
-    [rawTasks],
+    [needsRebalance, rawTasks],
   );
 
   const lists = useMemo(() => {

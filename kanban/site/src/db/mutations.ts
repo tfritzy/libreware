@@ -1,4 +1,10 @@
-import { setDoc, doc, Timestamp, updateDoc } from "firebase/firestore";
+import {
+  setDoc,
+  doc,
+  Timestamp,
+  updateDoc,
+  Transaction,
+} from "firebase/firestore";
 import { db } from "../lib/firebase";
 import type { Board, List, Task } from "./models";
 import { COLLECTIONS } from "./collections";
@@ -22,6 +28,19 @@ export async function updateTask(taskId: string, task: Partial<Task>) {
   const taskRef = doc(db, COLLECTIONS.tasks, taskId);
 
   await updateDoc(taskRef, {
+    ...task,
+    updatedAt: Timestamp.now(),
+  });
+}
+
+export function updateTaskWithTransaction(
+  transaction: Transaction,
+  taskId: string,
+  task: Partial<Task>,
+) {
+  const taskRef = doc(db, COLLECTIONS.tasks, taskId);
+
+  transaction.update(taskRef, {
     ...task,
     updatedAt: Timestamp.now(),
   });
