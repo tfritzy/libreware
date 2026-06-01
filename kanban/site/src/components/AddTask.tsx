@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createTask } from "../db/mutations";
 import { Check, Plus, X } from "lucide-react";
 
@@ -22,11 +22,20 @@ export function AddTask({
   maxWeight: number;
 }) {
   const [editing, setEditing] = useState(false);
-  const [name, setName] = useState("");
+  const [text, setText] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [placeholder, setPlaceholder] = useState<string>(
     getRandomPlaceholder(),
   );
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [text]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -36,13 +45,24 @@ export function AddTask({
         description: "",
         listId: listId,
         weight: maxWeight + 10,
-        name: name,
+        name: text,
       }).then(() => buttonRef.current?.focus());
       setEditing(false);
-      setName("");
+      setText("");
       setPlaceholder(getRandomPlaceholder());
     },
-    [boardId, listId, name, maxWeight],
+    [boardId, listId, text, maxWeight],
+  );
+
+  const handleEnter = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+
+        e.currentTarget.form?.requestSubmit();
+      }
+    },
+    [],
   );
 
   return (
@@ -52,29 +72,31 @@ export function AddTask({
           onSubmit={handleSubmit}
           className="focus-within:ring ring-zinc-500 rounded-lg bg-white/5"
         >
-          <div className="flex items-center space-x-1 py-1 pl-px pr-1">
+          <div className="flex flex-row items-stretch space-x-1">
             <button
               onClick={() => setEditing(false)}
               type="button"
-              className="hover:bg-white/12 hover:text-red-500 pl-2 text-zinc-500 text-sm font-medium rounded-lg cursor-pointer"
+              className="hover:bg-white/12 hover:text-red-500 focus:text-red-500 ring-red-500 focus:ring outline-none p-1 text-zinc-500 text-sm font-medium rounded-l-lg cursor-pointer"
             >
               <X size={14} />
             </button>
 
-            <input
+            <textarea
               autoFocus
+              ref={textareaRef}
               id="list_name"
-              type="text"
               name="list_name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              rows={1}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
               placeholder={placeholder}
-              className="placeholder:text-zinc-500 focus:outline-none focus:border-white/50 w-full"
+              onKeyDown={handleEnter}
+              className="placeholder:text-zinc-500 outline-none pl-1 pt-px focus:border-white/50 w-full resize-none"
             />
 
             <button
               type="submit"
-              className="hover:bg-white/12 rounded-lg p-1 text-emerald-500 font-medium cursor-pointer"
+              className="hover:bg-white/12 rounded-r-l p-1 focus:ring outline-none text-emerald-500 ring-emerald-500 font-medium cursor-pointer rounded-r-lg"
             >
               <Check size={20} />
             </button>
