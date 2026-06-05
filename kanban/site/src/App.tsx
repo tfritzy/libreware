@@ -1,19 +1,15 @@
-import { BoardComponent } from "./components/Board";
-import { Header } from "./components/Header";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { BoardPage } from "./pages/BoardPage";
+import { BoardList } from "./pages/BoardList";
 
 function App() {
-  const boardId = "board_alsdkfjlkasj";
-
   return (
-    <div className="min-h-screen text-black bg-[url('/backgrounds/nature/john-towner-JgOeRuGD_Y4-unsplash.jpg')] bg-cover bg-center bg-no-repeat bg-fixed">
-      <Header />
-
-      <div className="container mx-auto">
-        <main>
-          <BoardComponent id={boardId} />
-        </main>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<BoardList />} />
+        <Route path="/board/:boardId" element={<BoardPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
