@@ -61,12 +61,15 @@ export async function createBoard(
   return id;
 }
 
-export async function updateBoard(boardId: string, board: Board) {
+export async function updateBoard(
+  boardId: string,
+  board: Partial<Omit<Board, "id">>,
+) {
   const boardRef = doc(db, COLLECTIONS.boards, boardId);
 
   await updateDoc(boardRef, {
     ...board,
-    updatedAt: Timestamp.now,
+    updatedAt: Timestamp.now(),
   });
 }
 
@@ -87,6 +90,6 @@ export async function updatelist(listId: string, list: List) {
 
   await updateDoc(listRef, {
     ...list,
-    updatedAt: Timestamp.now,
+    updatedAt: Timestamp.now(),
   });
 }

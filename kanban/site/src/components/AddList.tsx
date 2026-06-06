@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { createList } from "../db/mutations";
 import { Check, Plus, X } from "lucide-react";
 import { Box } from "./Box";
+import { Input } from "./ui/input";
 
 export function AddList({ boardId }: { boardId: string }) {
   const [editing, setEditing] = useState(false);
@@ -18,7 +19,7 @@ export function AddList({ boardId }: { boardId: string }) {
   }, [name, boardId]);
 
   return (
-    <Box>
+    <div className="bg-white/25 backdrop-blur-3xl backdrop-brightness-110">
       {editing ? (
         <form
           onSubmit={(e) => {
@@ -36,15 +37,14 @@ export function AddList({ boardId }: { boardId: string }) {
               <X size={20} />
             </button>
 
-            <input
+            <Input
               autoFocus
               id="list_name"
-              type="text"
               name="list_name"
+              type="text"
+              placeholder="List name…"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="List name…"
-              className="rounded-lg text-md text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/50 w-full"
             />
 
             <button
@@ -58,12 +58,12 @@ export function AddList({ boardId }: { boardId: string }) {
       ) : (
         <button
           onClick={startEditing}
-          className="flex items-center gap-1.5 w-full px-2.5 py-2 text-white hover:bg-white/15 rounded-lg cursor-pointer transition-colors"
+          className="flex items-center gap-1.5 w-full px-2.5 py-2 text-zinc-800 hover:bg-white/15 rounded-lg cursor-pointer transition-colors"
         >
           <Plus size={20} />
           <div className="">Add another list</div>
         </button>
       )}
-    </Box>
+    </div>
   );
 }
