@@ -8,6 +8,8 @@ import {
   orderBy,
   query,
   runTransaction,
+  serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { COLLECTIONS } from "../db/collections";
@@ -42,6 +44,21 @@ export const BoardComponent = ({ id }: { id: string }) => {
 
     return unsubscribe;
   }, [user, id]);
+
+  useEffect(() => {
+    const recordView = async () => {
+      try {
+        const boardRef = doc(db, COLLECTIONS.boards, id);
+        await updateDoc(boardRef, {
+          viewedAt: serverTimestamp(),
+        });
+      } catch (error) {
+        console.error("Failed to update board viewedAt timestamp:", error);
+      }
+    };
+
+    recordView();
+  }, [id]);
 
   useEffect(() => {
     const q = query(

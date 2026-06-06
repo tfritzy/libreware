@@ -66,7 +66,7 @@ export function AddTask({
   );
 
   return (
-    <div>
+    <div className="mt-1">
       {editing && (
         <form
           onSubmit={handleSubmit}
@@ -76,7 +76,7 @@ export function AddTask({
             <button
               onClick={() => setEditing(false)}
               type="button"
-              className="hover:bg-white/12 hover:text-red-500 focus:text-red-500 ring-red-500 focus:ring outline-none p-1 text-zinc-500 text-sm font-medium rounded-l-lg cursor-pointer"
+              className="hover:bg-white/12 pl-2 hover:text-red-500 focus:text-red-500 ring-red-500 focus:ring outline-none p-1 text-zinc-500 text-sm font-medium rounded-l-lg cursor-pointer"
             >
               <X size={14} />
             </button>
@@ -91,7 +91,7 @@ export function AddTask({
               onChange={(e) => setText(e.target.value)}
               placeholder={placeholder}
               onKeyDown={handleEnter}
-              className="placeholder:text-zinc-500 outline-none pl-1 pt-px focus:border-white/50 w-full resize-none"
+              className="placeholder:text-zinc-500 my-2 outline-none pt-px focus:border-white/50 w-full resize-none"
             />
 
             <button

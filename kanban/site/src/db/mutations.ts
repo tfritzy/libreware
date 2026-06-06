@@ -47,15 +47,18 @@ export function updateTaskWithTransaction(
 }
 
 export async function createBoard(
-  board: Omit<Board, "id" | "createdAt" | "updatedAt">,
-) {
+  board: Omit<Board, "id" | "createdAt" | "updatedAt" | "viewedAt">,
+): Promise<string> {
   const id = generateId("board");
   await setDoc(doc(db, COLLECTIONS.boards, id), {
     ...board,
     id: id,
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),
+    viewedAt: Timestamp.now(),
   });
+
+  return id;
 }
 
 export async function updateBoard(boardId: string, board: Board) {
