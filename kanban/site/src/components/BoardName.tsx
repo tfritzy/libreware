@@ -64,12 +64,17 @@ export function BoardName() {
       ref={inputRef}
       onChange={(e) => setEditedName(e.target.value)}
       onFocus={() => inputRef.current?.select()}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          inputRef.current?.blur();
+        }
+      }}
       onBlur={() => {
         handleNameChange(editedName, board.id);
         setBoard({ ...board, name: editedName });
       }}
       className={cn(
-        "text-zinc-800 px-2 text-lg tracking-tight border border-transparent hover:border-zinc-800 focus-within:border-zinc-800",
+        "text-zinc-800 px-2 text-lg tracking-tight border-transparent focus:ring-blue-700 hover:ring-zinc-800  focus:ring-[1.5px] hover:ring-[1px] rounded-sm",
       )}
     />
   );
