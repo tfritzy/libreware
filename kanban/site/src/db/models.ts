@@ -1,5 +1,6 @@
 import type { Timestamp } from "firebase/firestore";
-import type { Color } from "./types";
+
+export type Priority = "highest" | "high" | "normal" | "low";
 
 export type Task = {
   id: string;
@@ -7,8 +8,8 @@ export type Task = {
   description: string;
   boardId: string;
   listId: string;
-  color: Color;
   weight: number;
+  priority: Priority;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 };

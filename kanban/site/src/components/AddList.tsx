@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import { createList } from "../db/mutations";
 import { Check, Plus, X } from "lucide-react";
-import { Box } from "./Box";
 import { Input } from "./ui/input";
 
 export function AddList({ boardId }: { boardId: string }) {

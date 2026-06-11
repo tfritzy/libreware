@@ -9,15 +9,13 @@ import { db } from "../lib/firebase";
 import type { Board, List, Task } from "./models";
 import { COLLECTIONS } from "./collections";
 import { generateId } from "../util/generateId";
-import { getRandomColor } from "../util/color";
 
 export async function createTask(
-  task: Omit<Task, "id" | "createdAt" | "updatedAt" | "color">,
+  task: Omit<Task, "id" | "createdAt" | "updatedAt">,
 ) {
   const id = generateId("task");
   await setDoc(doc(db, COLLECTIONS.tasks, id), {
     ...task,
-    color: getRandomColor(),
     id: id,
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),

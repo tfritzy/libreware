@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createTask } from "../db/mutations";
-import { Check, Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
+import { PriorityIcon } from "./PriorityIcon";
 
 const placeholders = [
   "Reticulate splines",
@@ -37,28 +38,45 @@ export function AddTask({
     }
   }, [text]);
 
+  const submit = useCallback(() => {
+    createTask({
+      boardId: boardId,
+      description: "",
+      priority: "low",
+      listId: listId,
+      weight: maxWeight + 10,
+      name: text,
+    }).then(() => buttonRef.current?.focus());
+  }, [boardId, listId, maxWeight, text]);
+
+  const reset = useCallback(() => {
+    setEditing(false);
+    setText("");
+    setPlaceholder(getRandomPlaceholder());
+  }, []);
+
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      createTask({
-        boardId: boardId,
-        description: "",
-        listId: listId,
-        weight: maxWeight + 10,
-        name: text,
-      }).then(() => buttonRef.current?.focus());
-      setEditing(false);
-      setText("");
-      setPlaceholder(getRandomPlaceholder());
+      submit();
+      reset();
     },
-    [boardId, listId, text, maxWeight],
+    [submit, reset],
+  );
+
+  const handleEscape = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        reset();
+      }
+    },
+    [reset],
   );
 
   const handleEnter = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
-
         e.currentTarget.form?.requestSubmit();
       }
     },
@@ -68,38 +86,27 @@ export function AddTask({
   return (
     <div className="mt-1">
       {editing && (
-        <form
-          onSubmit={handleSubmit}
-          className="focus-within:ring ring-zinc-500 rounded-lg bg-white/5"
-        >
-          <div className="flex flex-row items-stretch space-x-1">
-            <button
-              onClick={() => setEditing(false)}
-              type="button"
-              className="hover:bg-white/12 pl-2 hover:text-red-500 focus:text-red-500 ring-red-500 focus:ring outline-none p-1 text-zinc-500 text-sm font-medium rounded-l-lg cursor-pointer"
-            >
-              <X size={14} />
-            </button>
+        <form onSubmit={handleSubmit} onKeyDown={handleEscape} className="">
+          <div className="">
+            <div className="focus-within:ring ring-zinc-500 rounded bg-white/5 mb-2 flex flex-row">
+              <button className="px-2 ml-1">
+                <PriorityIcon priority={"low"} />
+              </button>
 
-            <textarea
-              autoFocus
-              ref={textareaRef}
-              id="list_name"
-              name="list_name"
-              rows={1}
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder={placeholder}
-              onKeyDown={handleEnter}
-              className="placeholder:text-zinc-500 my-2 outline-none pt-px focus:border-white/50 w-full resize-none"
-            />
-
-            <button
-              type="submit"
-              className="hover:bg-white/12 rounded-r-l p-1 focus:ring outline-none text-emerald-500 ring-emerald-500 font-medium cursor-pointer rounded-r-lg"
-            >
-              <Check size={20} />
-            </button>
+              <textarea
+                autoFocus
+                ref={textareaRef}
+                id="list_name"
+                name="list_name"
+                rows={1}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                onBlur={(e) => e.currentTarget.form?.requestSubmit()}
+                placeholder={placeholder}
+                onKeyDown={handleEnter}
+                className="placeholder:text-zinc-500 my-2 outline-none focus:border-white/50 w-full resize-none"
+              />
+            </div>
           </div>
         </form>
       )}
@@ -108,9 +115,11 @@ export function AddTask({
         key="add-button"
         onClick={() => setEditing(true)}
         ref={buttonRef}
-        className={`flex items-center outline-none focus:ring space-x-1 w-full p-2 text-sm text-zinc-500 hover:text-zinc-300 hover:bg-white/5 rounded-lg cursor-pointer transition-colors ${editing ? "hidden" : ""}`}
+        className={`flex items-center outline-none focus:ring py-2 w-full text-zinc-500 hover:text-zinc-300 hover:bg-white/5 rounded cursor-pointer transition-colors ${editing ? "hidden" : ""}`}
       >
-        <Plus size={16} />
+        <div className="px-2 ml-1">
+          <Plus className="w-3.5 h-3.5" />
+        </div>
         <div className="">Add task</div>
       </button>
     </div>
