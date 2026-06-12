@@ -18,12 +18,14 @@ import { ListComponent } from "./List";
 import { AddList } from "./AddList";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { updateTask, updateTaskWithTransaction } from "../db/mutations";
+import { TaskModal } from "./TaskModal";
 
 export const BoardComponent = ({ id }: { id: string }) => {
   const { user } = useAuth();
   const [_, setBoard] = useState<Board | undefined>(undefined);
   const [rawLists, setRawLists] = useState<List[]>([]);
   const [rawTasks, setRawTasks] = useState<Task[]>([]);
+  const [inspectedTask, setInspectedTask] = useState<Task | null>(null);
 
   useEffect(() => {
     const boardRef = doc(db, COLLECTIONS.boards, id);
@@ -188,6 +190,10 @@ export const BoardComponent = ({ id }: { id: string }) => {
     return updated;
   }, [rawLists, rawTasks]);
 
+  const setTaskInspected = useCallback((task: Task) => {
+    setInspectedTask(task);
+  }, []);
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex flex-row space-x-4">
@@ -199,12 +205,19 @@ export const BoardComponent = ({ id }: { id: string }) => {
               boardId={l.boardId}
               name={l.name}
               tasks={l.tasks}
+              setInspectedTask={setTaskInspected}
             />
           );
         })}
 
         <AddList boardId={id} />
       </div>
+
+      <TaskModal
+        task={inspectedTask}
+        close={() => setInspectedTask(null)}
+        key="inspect-modal"
+      />
     </DragDropContext>
   );
 };

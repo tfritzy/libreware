@@ -11,7 +11,7 @@ export function Input({
       type={type}
       {...props}
       className={cn(
-        "rounded-lg text-md focus:outline-none text-zinc-800 px-2",
+        "rounded-lg text-md focus:outline-none px-2",
         className || "",
       )}
     />

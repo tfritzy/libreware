@@ -9,11 +9,13 @@ export const ListComponent = ({
   boardId,
   name,
   tasks,
+  setInspectedTask,
 }: {
   id: string;
   boardId: string;
   name: string;
   tasks: Task[];
+  setInspectedTask: (task: Task) => void;
 }) => {
   const maxWeight = tasks.reduce((max, task) => Math.max(max, task.weight), 0);
 
@@ -27,7 +29,12 @@ export const ListComponent = ({
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {tasks.map((t, i) => (
-                  <TaskComponent task={t} key={t.id} index={i} />
+                  <TaskComponent
+                    task={t}
+                    key={t.id}
+                    index={i}
+                    onClick={() => setInspectedTask(t)}
+                  />
                 ))}
 
                 {provided.placeholder}

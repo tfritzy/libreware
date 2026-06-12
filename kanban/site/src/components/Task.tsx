@@ -22,9 +22,11 @@ function getStyle(
 
 export const TaskComponent = ({
   task,
+  onClick,
   index,
 }: {
   task: Task;
+  onClick: () => void;
   index: number;
 }) => {
   return (
@@ -36,6 +38,7 @@ export const TaskComponent = ({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           style={getStyle(provided.draggableProps.style, snapshot)}
+          onClick={onClick}
         >
           <div className="flex space-x-2 items-center bg-zinc-800 rounded px-3 py-2 hover:brightness-125 transition-colors duration-[15]">
             <PriorityIcon priority={task.priority || "normal"} />
