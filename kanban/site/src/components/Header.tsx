@@ -1,5 +1,5 @@
 import { CircuitBoard } from "lucide-react";
-import { Profile } from "./Profile";
+import { Profile } from "./Avatar/Profile";
 import { Link } from "react-router-dom";
 import { BoardName } from "./BoardName";
 

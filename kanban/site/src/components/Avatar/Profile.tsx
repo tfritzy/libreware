@@ -1,6 +1,6 @@
-import { useAuth } from "../lib/AuthContext";
+import { useAuth } from "../../lib/AuthContext";
 import { useState } from "react";
-import { SignInModal } from "./SignInModal";
+import { SignInModal } from "../SignInModal";
 import { AnonymousAvatar } from "./AnonymousAvatar";
 
 export function Profile() {

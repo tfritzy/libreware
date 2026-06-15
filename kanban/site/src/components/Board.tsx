@@ -25,7 +25,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
   const [_, setBoard] = useState<Board | undefined>(undefined);
   const [rawLists, setRawLists] = useState<List[]>([]);
   const [rawTasks, setRawTasks] = useState<Task[]>([]);
-  const [inspectedTask, setInspectedTask] = useState<Task | null>(null);
+  const [inspectedTask, setInspectedTask] = useState<string | null>(null);
 
   useEffect(() => {
     const boardRef = doc(db, COLLECTIONS.boards, id);
@@ -191,7 +191,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
   }, [rawLists, rawTasks]);
 
   const setTaskInspected = useCallback((task: Task) => {
-    setInspectedTask(task);
+    setInspectedTask(task.id);
   }, []);
 
   return (
@@ -214,7 +214,7 @@ export const BoardComponent = ({ id }: { id: string }) => {
       </div>
 
       <TaskModal
-        task={inspectedTask}
+        task={rawTasks.find((t) => t.id === inspectedTask)}
         close={() => setInspectedTask(null)}
         key="inspect-modal"
       />

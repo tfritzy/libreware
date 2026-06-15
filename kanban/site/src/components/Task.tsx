@@ -40,7 +40,7 @@ export const TaskComponent = ({
           style={getStyle(provided.draggableProps.style, snapshot)}
           onClick={onClick}
         >
-          <div className="flex space-x-2 items-center bg-zinc-800 rounded px-3 py-2 hover:brightness-125 transition-colors duration-[15]">
+          <div className="flex space-x-2 items-center bg-zinc-800 cursor-pointer rounded px-3 py-2 hover:brightness-125 transition-colors duration-[15]">
             <PriorityIcon priority={task.priority || "normal"} />
             <div>{task.name}</div>
           </div>

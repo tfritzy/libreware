@@ -24,19 +24,11 @@ export function AddTask({
 }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [placeholder, setPlaceholder] = useState<string>(
     getRandomPlaceholder(),
   );
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [text]);
 
   const submit = useCallback(() => {
     createTask({
@@ -74,7 +66,7 @@ export function AddTask({
   );
 
   const handleEnter = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         e.currentTarget.form?.requestSubmit();
@@ -93,12 +85,11 @@ export function AddTask({
                 <PriorityIcon priority={"low"} />
               </button>
 
-              <textarea
+              <input
                 autoFocus
-                ref={textareaRef}
+                ref={inputRef}
                 id="list_name"
                 name="list_name"
-                rows={1}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 onBlur={(e) => e.currentTarget.form?.requestSubmit()}
