@@ -6,7 +6,7 @@ import {
   Transaction,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
-import type { Board, List, Task } from "./models";
+import type { Board, List, Task, Comment } from "./models";
 import { COLLECTIONS } from "./collections";
 import { generateId } from "../util/generateId";
 
@@ -88,6 +88,27 @@ export async function updatelist(listId: string, list: List) {
 
   await updateDoc(listRef, {
     ...list,
+    updatedAt: Timestamp.now(),
+  });
+}
+
+export async function createComment(
+  comment: Omit<Comment, "id" | "createdAt" | "updatedAt">,
+) {
+  const id = generateId("comment");
+  await setDoc(doc(db, COLLECTIONS.comments, id), {
+    ...comment,
+    id: id,
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+  });
+}
+
+export async function updateComment(id: string, comment: Partial<Comment>) {
+  const ref = doc(db, COLLECTIONS.comments, id);
+
+  await updateDoc(ref, {
+    ...comment,
     updatedAt: Timestamp.now(),
   });
 }

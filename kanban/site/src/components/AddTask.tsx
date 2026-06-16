@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { createTask } from "../db/mutations";
 import { Plus } from "lucide-react";
 import { PriorityIcon } from "./PriorityIcon";

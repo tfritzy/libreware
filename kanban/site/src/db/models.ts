@@ -26,3 +26,12 @@ export type Board = {
   ownerId: string;
   viewedAt: Timestamp;
 };
+
+export type Comment = {
+  id: string;
+  taskId: string;
+  text: string;
+  sender: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+};
