@@ -24,7 +24,7 @@ export function Comments({ taskId }: { taskId: string }) {
     const q = query(
       collection(db, COLLECTIONS.comments),
       where("taskId", "==", taskId),
-      orderBy("createdAt", "asc"),
+      orderBy("createdAt", "desc"),
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -79,6 +79,30 @@ export function Comments({ taskId }: { taskId: string }) {
 
   return (
     <div>
+      <div className="flex flex-col-reverse space-y-5 pb-6 h-150 overflow-y-scroll">
+        {comments.map((c) => (
+          <div className="flex flex-row space-x-3">
+            <Avatar className="my-1" />
+            <div className="flex flex-col space-y-2">
+              <div className="flex flex-row items-center space-x-2">
+                <div className="text-blue-300 font-bold">
+                  {c.sender.substring(0, 12)}
+                </div>
+                <div className="text-zinc-400 text-sm">
+                  {c.createdAt.toDate().toLocaleString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+                </div>
+              </div>
+              <div className="whitespace-pre-wrap">{c.text}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="flex flex-row space-x-2 items-center">
         <Avatar />
         <form onSubmit={handleSubmit} className="w-full">
@@ -99,8 +123,6 @@ export function Comments({ taskId }: { taskId: string }) {
           />
         </form>
       </div>
-
-      <div>{comments.map((c) => JSON.stringify(c))}</div>
     </div>
   );
 }
